@@ -7,5 +7,6 @@ library(knitr)
 library(markdown)
 
 
+
 knit("project.Rmd")
-#markdownToHTML("project.Rmd", "project.md", "project.html", options = c("use_xhml"))
+markdownToHTML("project.Rmd", "project.md", "project.html", options = c("use_xhml"))
