@@ -22,6 +22,11 @@ The data for this project come from this source: http://groupware.les.inf.puc-ri
 
 ### Load Relevant Libraries
 
+```r
+library(ggplot2)
+library(caret)
+library(data.table)
+```
 
 You can also embed plots, for example:
 
