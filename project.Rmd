@@ -1,18 +1,12 @@
----
-title: "Practical Machine Learning Course Project"
-author: "Sahil Patel"
-date: "April 25 , 2015"
-output:
-  html_document:
-    toc: yes
----
 
-Title
+Practical Machine Learning Course: Project
 ========================================================
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring web pages (click the **MD** toolbar button for help on Markdown).
+## Introduction
 
-When you click the **Knit HTML** button a web page will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. 
+
+
 
 ```{r}
 summary(cars)
