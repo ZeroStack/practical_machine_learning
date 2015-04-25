@@ -1,3 +1,12 @@
+---
+title: "Practical Machine Learning Course Project"
+author: "Sahil Patel"
+date: "April 25 , 2015"
+output:
+  html_document:
+    toc: yes
+---
+
 Title
 ========================================================
 
