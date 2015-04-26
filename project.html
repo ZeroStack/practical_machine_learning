@@ -185,8 +185,7 @@ hr {
 
 <h3>Load Relevant Libraries</h3>
 
-<pre><code class="r">library(ggplot2)
-library(caret)
+<pre><code class="r">library(caret)
 </code></pre>
 
 <h3>Download and Read Data</h3>
@@ -378,6 +377,10 @@ accuracy
 <p>The out-of-sample error is accuracy subtracted from 1.</p>
 
 <pre><code class="r">outSE &lt;- 1 - as.numeric(cM$overall[1])
+outSE
+</code></pre>
+
+<pre><code>## [1] 0.01104503
 </code></pre>
 
 <p>Our final values are:
@@ -396,6 +399,18 @@ result
 
 <pre><code>##  [1] B A B A A E D B A A B C B A E E A B B B
 ## Levels: A B C D E
+</code></pre>
+
+<h3>Function to create submission files</h3>
+
+<pre><code class="r"># Write files for submission
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0(&quot;./data/submission/problem_id_&quot;,i,&quot;.txt&quot;)
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
 </code></pre>
 
 </body>

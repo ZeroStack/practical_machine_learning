@@ -24,7 +24,6 @@ The data for this project come from this source: http://groupware.les.inf.puc-ri
 
 
 ```r
-library(ggplot2)
 library(caret)
 ```
 
@@ -247,6 +246,11 @@ The out-of-sample error is accuracy subtracted from 1.
 
 ```r
 outSE <- 1 - as.numeric(cM$overall[1])
+outSE
+```
+
+```
+## [1] 0.01104503
 ```
 
 Our final values are:
@@ -268,5 +272,18 @@ result
 ```
 ##  [1] B A B A A E D B A A B C B A E E A B B B
 ## Levels: A B C D E
+```
+
+### Function to create submission files
+
+```r
+# Write files for submission
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("./data/submission/problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
 ```
 
