@@ -21,14 +21,142 @@ https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
 The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.
 
 ### Load Relevant Libraries
-```{r prep, echo = T, message = F}
+
+```{r, echo = T, message = F}
 library(ggplot2)
 library(caret)
-library(data.table)
 ```
 
-You can also embed plots, for example:
+### Download and Read Data
 
-```{r fig.width=7, fig.height=6}
-plots(cars)
+This section will download and read the data into R.
+
+```{r}
+# Download Data
+trainUrl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+testUrl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+
+trainFile <- "./data/pml-training.csv"
+testFile  <- "./data/pml-testing.csv"
+
+if (!file.exists("./data")) {
+  dir.create("./data")
+}
+if (!file.exists(trainFile)) {
+  download.file(trainUrl, destfile=trainFile, method="curl")
+}
+if (!file.exists(testFile)) {
+  download.file(testUrl, destfile=testFile, method="curl")
+}
+
+# Read data
+trainRaw <- read.csv("./data/pml-training.csv")
+testRaw <- read.csv("./data/pml-testing.csv")
 ```
+
+### Clean Data
+
+In this step, we will clean the data. This will involve ridding missing values and meaningless variables that will deliver poorer results.
+
+Check dimensions prior to any adjustments.
+
+```{r}
+# Check dimensions 
+dim(trainRaw)
+dim(testRaw)
+```
+
+Check for NA values
+
+```{r}
+sum(complete.cases(trainRaw))
+sum(complete.cases(testRaw))
+```
+
+Remove missing values
+
+```{r}
+trainRaw <- trainRaw[, colSums(is.na(trainRaw)) == 0] 
+testRaw <- testRaw[, colSums(is.na(testRaw)) == 0] 
+```
+
+Remove columns that are not significant contributors.
+
+```{r}
+classe <- trainRaw$classe
+trainRemove <- grepl("^X|timestamp|window", names(trainRaw))
+trainRaw <- trainRaw[, !trainRemove]
+trainCleaned <- trainRaw[, sapply(trainRaw, is.numeric)]
+trainCleaned$classe <- classe
+testRemove <- grepl("^X|timestamp|window", names(testRaw))
+testRaw <- testRaw[, !testRemove]
+testCleaned <- testRaw[, sapply(testRaw, is.numeric)]
+```
+Compare dimensions of trainRaw and trainCleaned
+```{r}
+dim(trainRaw) ; dim(trainCleaned)
+```
+### Create Data Partitions
+
+Here, we will create data partitions. The training set will be formed of 70% of the trainRaw data after cleansing.
+
+```{r}
+set.seed(12345) # Reproducibile segment
+inTrain <- createDataPartition(trainCleaned$classe, p = 0.70, list = FALSE)
+
+trainData <- trainCleaned[inTrain, ]
+testData <- trainCleaned[-inTrain, ]
+```
+
+### Data Modeling
+
+I chose to fit a predictive model with the Random Forest algorithm. Random Forests grow many classification trees to classify a new object. This works on individual trees acting on a 'voting' system for that class.
+
+The model is accurate at a trade-off for speed, which is not an immediate need.
+
+For the Random Forest, I used a 5-fold cross validation.
+
+```{r}
+controlRf <- trainControl(method="cv", 5)
+modelRf <- train(classe ~ ., data=trainData, method="rf", trControl=controlRf, ntree=250)
+modelRf
+```
+
+### Apply Prediction Model to Partion Test Data Set
+
+Apply prediction model to the test data set created at the data partition step.
+
+```{r}
+predictRf <- predict(modelRf, testData)
+cM <- confusionMatrix(testData$classe, predictRf)
+cM
+```
+
+Determine accuracy and out-of-sample error. 
+
+```{r}
+accuracy <- postResample(predictRf, testData$classe)
+accuracy
+```
+
+The out-of-sample error is accuracy subtracted from 1.
+
+```{r}
+outSE <- 1 - as.numeric(cM$overall[1])
+```
+
+Our final values are:
+Accuracy: 0.9940527 or 99.40%
+Out-of-Sample Error: 0.0059473 or 0.60%
+
+This is classed as a good predicton algorithm as it is abve the 80% accuracy threshold.
+
+### Apply Prediction Model to Test Data Set
+
+This is the final portion of the assignment; where we will apply the prediction algorithm to the 20 row test set downloaded in the beginning of the project.
+
+```{r}
+result <- predict(modelRf, testCleaned)
+result
+```
+
