@@ -2,12 +2,12 @@
 this.dir <- dirname(parent.frame(2)$ofile)
 setwd(this.dir)
 
-set.seed(1234)
+set.seed(12345)
 # Load relevant libraries
 library(knitr)
 library(markdown)
 library(caret)
-library(data.table)
+
 
 trainUrl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
 testUrl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
@@ -53,7 +53,17 @@ predictRf <- predict(modelFit, testData)
 cM <- confusionMatrix(testData$classe, predictRf)
 
 accuracy <- postResample(predictRf, testData$classe)
-result <- predict(modelRf, testCleaned[, -length(names(testCleaned))])
-# Removing columns that 
-# knit("project.Rmd")
-# markdownToHTML("project.md", "project.html", options = c("use_xhml"))
+result <- predict(modelRf, testCleaned)
+result
+
+# Write files for submission
+pml_write_files = function(x){
+        n = length(x)
+        for(i in 1:n){
+                filename = paste0("./data/submission/problem_id_",i,".txt")
+                write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+        }
+}
+
+knit("project.Rmd")
+markdownToHTML("project.md", "project.html", options = c("use_xhml"))

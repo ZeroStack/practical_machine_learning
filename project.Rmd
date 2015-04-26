@@ -23,7 +23,6 @@ The data for this project come from this source: http://groupware.les.inf.puc-ri
 ### Load Relevant Libraries
 
 ```{r, echo = T, message = F}
-library(ggplot2)
 library(caret)
 ```
 
@@ -143,6 +142,7 @@ The out-of-sample error is accuracy subtracted from 1.
 
 ```{r}
 outSE <- 1 - as.numeric(cM$overall[1])
+outSE
 ```
 
 Our final values are:
@@ -158,5 +158,17 @@ This is the final portion of the assignment; where we will apply the prediction 
 ```{r}
 result <- predict(modelRf, testCleaned)
 result
+```
+
+### Function to create submission files
+```{r}
+# Write files for submission
+pml_write_files = function(x){
+  n = length(x)
+  for(i in 1:n){
+    filename = paste0("./data/submission/problem_id_",i,".txt")
+    write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+  }
+}
 ```
 
